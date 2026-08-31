@@ -1,14 +1,13 @@
 package dao.impl;
 
-import java.util.List;
-
 import dao.ICategoryDao;
 import entity.Category;
+import util.JpaConfig;
+
+import java.util.List;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
-import util.JpaConfig;
 
 public class CategoryDaoImpl implements ICategoryDao {
 
@@ -18,7 +17,7 @@ public class CategoryDaoImpl implements ICategoryDao {
         EntityTransaction trans = enma.getTransaction();
         try {
             trans.begin();
-            enma.persist(category); // Lệnh thêm mới vào DB
+            enma.persist(category);
             trans.commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -35,7 +34,7 @@ public class CategoryDaoImpl implements ICategoryDao {
         EntityTransaction trans = enma.getTransaction();
         try {
             trans.begin();
-            enma.merge(category); // Lệnh cập nhật vào DB
+            enma.merge(category);
             trans.commit();
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,17 +46,16 @@ public class CategoryDaoImpl implements ICategoryDao {
     }
 
     @Override
-    public void delete(int cateid) throws Exception {
+    public void delete(int id) throws Exception {
         EntityManager enma = JpaConfig.getEntityManager();
         EntityTransaction trans = enma.getTransaction();
         try {
             trans.begin();
-            // Phải tìm đối tượng trước khi xóa
-            Category category = enma.find(Category.class, cateid);
+            Category category = enma.find(Category.class, id);
             if (category != null) {
                 enma.remove(category);
             } else {
-                throw new Exception("Không tìm thấy danh mục để xóa");
+                throw new Exception("Không tìm thấy Category");
             }
             trans.commit();
         } catch (Exception e) {
@@ -70,80 +68,29 @@ public class CategoryDaoImpl implements ICategoryDao {
     }
 
     @Override
-    public Category findById(int cateid) {
+    public Category findById(int id) {
         EntityManager enma = JpaConfig.getEntityManager();
-        try {
-            return enma.find(Category.class, cateid);
-        } finally {
-            enma.close();
-        }
-    }
-
-    @Override
-    public Category findByCategoryname(String name) throws Exception {
-        EntityManager enma = JpaConfig.getEntityManager();
-        String jpql = "SELECT c FROM Category c WHERE c.categoryname = :catename";
-        try {
-            TypedQuery<Category> query = enma.createQuery(jpql, Category.class);
-            query.setParameter("catename", name);
-            Category category = query.getSingleResult();
-            if (category == null) {
-                throw new Exception("Category Name đã tồn tại");
-            }
-            return category;
-        } finally {
-            enma.close();
-        }
+        Category category = enma.find(Category.class, id);
+        enma.close();
+        return category;
     }
 
     @Override
     public List<Category> findAll() {
         EntityManager enma = JpaConfig.getEntityManager();
-        try {
-            // Sử dụng NamedQuery đã được khai báo ở trên đầu file entity.Category
-            TypedQuery<Category> query = enma.createNamedQuery("Category.findAll", Category.class);
-            return query.getResultList();
-        } finally {
-            enma.close();
-        }
+        TypedQuery<Category> query = enma.createQuery("SELECT c FROM Category c", Category.class);
+        List<Category> list = query.getResultList();
+        enma.close();
+        return list;
     }
 
     @Override
-    public List<Category> searchByName(String catname) {
+    public List<Category> findByCategoryName(String catName) {
         EntityManager enma = JpaConfig.getEntityManager();
-        String jpql = "SELECT c FROM Category c WHERE c.categoryname like :catname";
-        try {
-            TypedQuery<Category> query = enma.createQuery(jpql, Category.class);
-            query.setParameter("catname", "%" + catname + "%");
-            return query.getResultList();
-        } finally {
-            enma.close();
-        }
-    }
-
-    @Override
-    public List<Category> findAll(int page, int pagesize) {
-        EntityManager enma = JpaConfig.getEntityManager();
-        try {
-            TypedQuery<Category> query = enma.createNamedQuery("Category.findAll", Category.class);
-            // Phân trang
-            query.setFirstResult(page * pagesize);
-            query.setMaxResults(pagesize);
-            return query.getResultList();
-        } finally {
-            enma.close();
-        }
-    }
-
-    @Override
-    public int count() {
-        EntityManager enma = JpaConfig.getEntityManager();
-        String jpql = "SELECT count(c) FROM Category c";
-        try {
-            Query query = enma.createQuery(jpql);
-            return ((Long) query.getSingleResult()).intValue();
-        } finally {
-            enma.close();
-        }
+        TypedQuery<Category> query = enma.createQuery("SELECT c FROM Category c WHERE c.categoryName LIKE :catName", Category.class);
+        query.setParameter("catName", "%" + catName + "%");
+        List<Category> list = query.getResultList();
+        enma.close();
+        return list;
     }
 }

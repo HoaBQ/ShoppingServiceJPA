@@ -1,72 +1,43 @@
 package service.impl;
 
-import java.util.List;
-
 import dao.ICategoryDao;
 import dao.impl.CategoryDaoImpl;
 import entity.Category;
 import service.ICategoryService;
 
+import java.util.List;
+
 public class CategoryServiceImpl implements ICategoryService {
-    // Sửa đúng tên Impl đã khai báo
-    public ICategoryDao cateDao = new CategoryDaoImpl();
 
-    @Override
-    public List<Category> findAll() {
-        return cateDao.findAll();
-    }
-
-    @Override
-    public Category findById(int id) {
-        return cateDao.findById(id);
-    }
-
-    @Override
-    public List<Category> searchByName(String keyword) {
-        return cateDao.searchByName(keyword);
-    }
+    private ICategoryDao categoryDao = new CategoryDaoImpl();
 
     @Override
     public void insert(Category category) {
-        Category cate = this.findByCategoryname(category.getCategoryname());
-        if (cate == null) {
-            cateDao.insert(category);
-        }
+        categoryDao.insert(category);
     }
 
     @Override
     public void update(Category category) {
-        Category cate = this.findById(category.getCategoryId());
-        if (cate != null) {
-            cateDao.update(category);
-        }
+        categoryDao.update(category);
     }
 
     @Override
-    public void delete(int id) {
-        try {
-            cateDao.delete(id);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void delete(int id) throws Exception {
+        categoryDao.delete(id);
     }
 
     @Override
-    public int count() {
-        return cateDao.count();
+    public Category findById(int id) {
+        return categoryDao.findById(id);
     }
 
     @Override
-    public List<Category> findAll(int page, int pagesize) {
-        return cateDao.findAll(page, pagesize);
+    public List<Category> findAll() {
+        return categoryDao.findAll();
     }
 
     @Override
-    public Category findByCategoryname(String name) {
-        try {
-            return cateDao.findByCategoryname(name);
-        } catch (Exception e) {
-            return null;
-        }
+    public List<Category> findByCategoryName(String catName) {
+        return categoryDao.findByCategoryName(catName);
     }
 }

@@ -1,21 +1,21 @@
 package controller;
 
-import java.io.IOException;
-import java.sql.Date;
-
 import entity.User;
+import service.UserService;
+import service.impl.UserServiceImpl;
+import util.EmailUtil;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import service.UserService;
-import service.impl.UserServiceImpl;
 
 @WebServlet(urlPatterns = {"/register"})
 public class RegisterController extends HttpServlet {
-    private static final long serialVersionUID = 1L;
-    UserService userService = new UserServiceImpl();
+    private UserService userService = new UserServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -25,40 +25,34 @@ public class RegisterController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
-
-        String username = req.getParameter("username");
-        String password = req.getParameter("password");
-        String email = req.getParameter("email");
-        String fullname = req.getParameter("fullname");
-        String phone = req.getParameter("phone");
-
-        // Kiểm tra tồn tại trong Database
-        if (userService.checkExistUsername(username)) {
-            req.setAttribute("alert", "Tên đăng nhập đã tồn tại!");
-            req.getRequestDispatcher("/views/register.jsp").forward(req, resp);
-            return;
-        }
         
-        if (userService.checkExistEmail(email)) {
-            req.setAttribute("alert", "Email đã được sử dụng!");
+        String username = req.getParameter("username");
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
+        String fullname = req.getParameter("fullname");
+
+        // Kiểm tra xem email đã tồn tại chưa
+        if (userService.findByEmail(email) != null) {
+            req.setAttribute("error", "Email này đã được sử dụng!");
             req.getRequestDispatcher("/views/register.jsp").forward(req, resp);
             return;
         }
 
-        // Tạo Entity mới
         User user = new User();
-        user.setUserName(username);
-        user.setPassWord(password);
+        user.setUsername(username);
         user.setEmail(email);
-        user.setFullName(fullname);
-        user.setPhone(phone);
-        user.setRoleid(2); // Mặc định roleid = 2 là User thường (1 là Admin)
-        user.setCreatedDate(new Date(System.currentTimeMillis()));
+        user.setPassword(password); 
+        user.setFullname(fullname);
+        user.setRole("USER");
+        user.setActive(false);
+        
+        String otp = EmailUtil.generateOTP();
+        user.setOtpCode(otp);
+        user.setOtpExpiration(LocalDateTime.now().plusMinutes(5));
 
         userService.insert(user);
-        
-        // Đăng ký thành công, chuyển về trang Login
-        resp.sendRedirect(req.getContextPath() + "/login");
+        EmailUtil.sendOtpEmail(email, otp);
+
+        resp.sendRedirect(req.getContextPath() + "/verify-otp?email=" + email);
     }
 }

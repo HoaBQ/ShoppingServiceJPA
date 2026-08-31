@@ -1,17 +1,13 @@
 package dao;
 
-import java.util.List;
-
 import entity.Category;
+import java.util.List;
 
 public interface ICategoryDao {
     void insert(Category category);
     void update(Category category);
-    void delete(int cateid) throws Exception;
-    Category findById(int cateid);
-    Category findByCategoryname(String name) throws Exception;
+    void delete(int id) throws Exception;
+    Category findById(int id);
     List<Category> findAll();
-    List<Category> searchByName(String catname);
-    List<Category> findAll(int page, int pagesize);
-    int count();
+    List<Category> findByCategoryName(String catName);
 }

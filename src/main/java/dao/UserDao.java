@@ -1,10 +1,14 @@
 package dao;
 
 import entity.User;
+import java.util.List;
 
 public interface UserDao {
-    User get(String username);
     void insert(User user);
-    boolean checkExistEmail(String email);
-    boolean checkExistUsername(String username);
+    void update(User user);
+    void delete(int id) throws Exception;
+    User findById(int id);
+    User findByUsername(String username);
+    User findByEmail(String email);
+    List<User> findAll();
 }

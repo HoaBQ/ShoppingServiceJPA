@@ -6,7 +6,7 @@ import jakarta.persistence.Persistence;
 
 public class JpaConfig {
     public static EntityManager getEntityManager() {
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("jpa-hibernate-mysql");
+        EntityManagerFactory factory = Persistence.createEntityManagerFactory("ShoppingServiceJPA");
         return factory.createEntityManager();
     }
 }

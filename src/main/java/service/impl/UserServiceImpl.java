@@ -5,19 +5,11 @@ import dao.impl.UserDaoImpl;
 import entity.User;
 import service.UserService;
 
-public class UserServiceImpl implements UserService {
-    // Khởi tạo DAO
-    UserDao userDao = new UserDaoImpl();
+import java.util.List;
 
-    @Override
-    public User login(String username, String password) {
-        User user = userDao.get(username);
-        // Kiểm tra user có tồn tại không và mật khẩu có khớp không
-        if (user != null && user.getPassWord().equals(password)) {
-            return user;
-        }
-        return null;
-    }
+public class UserServiceImpl implements UserService {
+
+    private UserDao userDao = new UserDaoImpl();
 
     @Override
     public void insert(User user) {
@@ -25,12 +17,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean checkExistEmail(String email) {
-        return userDao.checkExistEmail(email);
+    public void update(User user) {
+        userDao.update(user);
     }
 
     @Override
-    public boolean checkExistUsername(String username) {
-        return userDao.checkExistUsername(username);
+    public void delete(int id) throws Exception {
+        userDao.delete(id);
+    }
+
+    @Override
+    public User findById(int id) {
+        return userDao.findById(id);
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        return userDao.findByUsername(username);
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userDao.findByEmail(email);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userDao.findAll();
     }
 }
