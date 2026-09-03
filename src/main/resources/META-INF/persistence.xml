@@ -1,21 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
-    <persistence-unit name="jpa-hibernate-mysql">
+<persistence version="3.0" 
+             xmlns="https://jakarta.ee/xml/ns/persistence" 
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+
+    <persistence-unit name="ShoppingServiceJPA" transaction-type="RESOURCE_LOCAL">
+        <!-- Chỉ định Provider của Hibernate chuẩn Jakarta -->
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <!-- Khai báo các Entity Class để JPA nhận diện -->
         <class>entity.Category</class>
-        <class>entity.Video</class>
+        <class>entity.Product</class>
         <class>entity.User</class>
+
         <properties>
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=ShoppingServiceJPA;encrypt=true;trustServerCertificate=true;sendStringParametersAsUnicode=true;" />
-            <property name="jakarta.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
-            <property name="jakarta.persistence.jdbc.user" value="sa" />
-            <property name="jakarta.persistence.jdbc.password" value="123" /> <!-- Sửa lại pass máy bạn -->
+            <!-- 1. Cấu hình kết nối SQL Server (Sửa lại user/pass cho đúng với máy bạn) -->
+            <property name="jakarta.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
             
-            <property name="hibernate.show_sql" value="true" />
-            <property name="hibernate.format_sql" value="true" />
-            <property name="hibernate.hbm2ddl.auto" value="update" />
-            <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServer2012Dialect"/>
+            <!-- Đảm bảo có encrypt=false hoặc trustServerCertificate=true với MSSQL phiên bản mới -->
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=ShoppingServiceJPA;encrypt=true;trustServerCertificate=true;"/>
+            
+            <!-- THAY ĐỔI USERNAME VÀ PASSWORD CỦA BẠN Ở ĐÂY -->
+            <property name="jakarta.persistence.jdbc.user" value="sa"/> 
+            <property name="jakarta.persistence.jdbc.password" value="123"/> 
+
+            <!-- 2. Cấu hình Hibernate -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            
+            <!-- 'none': Không can thiệp sửa bảng (Vì bạn đã chạy file DB.sql tay rồi) -->
+            <property name="hibernate.hbm2ddl.auto" value="none"/>
         </properties>
     </persistence-unit>
 </persistence>

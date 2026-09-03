@@ -25,6 +25,7 @@ public class HomeController extends HttpServlet {
         List<Product> top10Products = productService.findTop10Latest();
         req.setAttribute("latestProducts", top10Products);
         
-        req.getRequestDispatcher("/index.jsp").forward(req, resp);
+        // CHÚ Ý CHỖ NÀY: Phải trỏ đúng vào /views/home.jsp
+        req.getRequestDispatcher("/views/home.jsp").forward(req, resp);
     }
 }

@@ -1,7 +1,8 @@
 package controller;
 
-import entity.User;
 import java.io.IOException;
+
+import entity.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -16,7 +17,8 @@ public class WaitingController extends HttpServlet {
         HttpSession session = req.getSession();
         if (session != null && session.getAttribute("account") != null) {
             User u = (User) session.getAttribute("account");
-            req.setAttribute("username", u.getUsername());
+            
+            // Phân quyền: Admin vào khu quản trị, User ra trang chủ
             if (u.getRole() != null && u.getRole().equalsIgnoreCase("ADMIN")) {
                 resp.sendRedirect(req.getContextPath() + "/admin/category");
             } else {

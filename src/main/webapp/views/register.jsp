@@ -184,8 +184,8 @@
                 <h2>Tạo tài khoản mới</h2>
                 <p class="sub">Điền thông tin bên dưới để mở tài khoản quản lý.</p>
 
-                <c:if test="${alert != null}">
-                    <div class="alert-banner">${alert}</div>
+                <c:if test="${error != null}">
+                    <div class="alert-banner">${error}</div>
                 </c:if>
 
                 <form action="${pageContext.request.contextPath}/register" method="post">
